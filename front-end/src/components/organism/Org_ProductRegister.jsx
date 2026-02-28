@@ -59,11 +59,11 @@ export default function ProductRegister() {
         payload
       );
 
-      console.log("Produto registrado com sucesso:", response);
-      alert("Produto registrado com sucesso!");
+      console.log("Success:", response);
+      alert("Registred product successfully!");
     } catch (err) {
-      console.error("Erro ao registrar produto:", err);
-      alert("Erro ao registrar produto");
+      console.error("Error:", err);
+      alert("Error registring product. Please check the console for details.");
     }
   }
 

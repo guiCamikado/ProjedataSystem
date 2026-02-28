@@ -28,7 +28,7 @@ export default function SideBarCluster({
                 </>
             ) : (
                 <b className="text-red-600">
-                    Cluster não contém dados. Use [{`{ text, link }`}]
+                    Cluster has no data. Use [{`{ text, link }`}]
                 </b>
             )}
         </>

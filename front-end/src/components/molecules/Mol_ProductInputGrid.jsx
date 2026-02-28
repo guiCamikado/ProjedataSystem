@@ -23,7 +23,7 @@ export default function ProductInputsGrid({
       <Input
         type="number"
         name="quantity"
-        placeholder="Qtdd"
+        placeholder="Quantity ex: 10"
         value={product.quantity}
         onChange={handleChange}
       />
@@ -32,7 +32,7 @@ export default function ProductInputsGrid({
       <Input
         type="number"
         name="price"
-        placeholder="Price ex: 300.00"
+        placeholder="Price ex: 300"
         value={product.price}
         onChange={handleChange}
       />
@@ -51,7 +51,7 @@ export default function ProductInputsGrid({
 
             <Input
               name={`material.${index}.quantity`}
-              placeholder="Qtd"
+              placeholder="Quantity ex: 50"
               value={material.quantity}
               onChange={handleChange}
               className="w-32"
@@ -70,14 +70,14 @@ export default function ProductInputsGrid({
           onClick={handleAddMaterial}
           className="self-start bg-green-600 hover:bg-green-700"
         >
-          + Adicionar material
+          + Add Material
         </Button>
 
         <Button
           onClick={handleSendToDatabase}
           className="self-start bg-blue-600 hover:bg-blue-700"
         >
-          Enviar
+          Send
         </Button>
       </div>
     </div>

@@ -26,20 +26,18 @@ export default function ProductRegisterPage() {
     if (pageFromUrl) {
       setRenderedPage(pageFromUrl);
     }
-  }, []); // 👈 array vazio = sem loop
+  }, []);
 
   const renderContent = () => {
     switch (renderedPage) {
+      default:
+        return <SupplyRegister product={product} handleChange={handleChange} />;
       case "itemRegister":
-        return (
-          <ProductRegister product={product} handleChange={handleChange} />
-        );
+        return <ProductRegister product={product} handleChange={handleChange}/>;
       case "craft":
         return <CraftingPage product={product} handleChange={handleChange} />;
       case "management":
-        return <ManagementPage/>;
-      default:
-        return <SupplyRegister product={product} handleChange={handleChange} />;
+        return <ManagementPage />;
     }
   };
 

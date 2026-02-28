@@ -122,7 +122,7 @@ export default function CraftingPage() {
       <div className="grid grid-cols-12 gap-6 h-full">
         <div className="col-span-4 flex flex-col gap-4">
           <Input
-            placeholder="Buscar item..."
+            placeholder="Search Item..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -207,7 +207,7 @@ export default function CraftingPage() {
 
               {/* Controle de quantidade */}
               <div className="flex items-center gap-4">
-                <span className="font-medium">Quantidade:</span>
+                <span className="font-medium">Quantity:</span>
                 <Input
                   type="number"
                   value={quantity}
@@ -227,12 +227,12 @@ export default function CraftingPage() {
                 onClick={() => craftNewProducts()}
               >
                 {/* // WIP Criar função de craft e conectar com o backend */}
-                Craftar
+                Create new product
               </Button>
             </>
           ) : (
             <div className="text-black/60">
-              Selecione um item para ver o custo.
+              Select an item to see the cost.
             </div>
           )}
         </div>
