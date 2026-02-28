@@ -33,7 +33,9 @@ export default function ProductRegisterPage() {
       default:
         return <SupplyRegister product={product} handleChange={handleChange} />;
       case "itemRegister":
-        return <ProductRegister product={product} handleChange={handleChange}/>;
+        return (
+          <ProductRegister product={product} handleChange={handleChange} />
+        );
       case "craft":
         return <CraftingPage product={product} handleChange={handleChange} />;
       case "management":
@@ -42,7 +44,7 @@ export default function ProductRegisterPage() {
   };
 
   return (
-    <div className="bg-[#201F20]">
+    <div className="bg-[#201F20] overflow-y-auto md:overflow-hidden touch-pan-y">
       <Sidebar renderedPage={renderContent()} />
     </div>
   );

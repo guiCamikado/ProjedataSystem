@@ -74,8 +74,8 @@ export default function Sidebar({ renderedPage }) {
       </aside>
 
       {/* Conteúdo principal*/}
-      <main className={"bg-[#D4D3D4] text-black w-full h-full overflow-y-auto"}>
-        <div className="p-10">{renderedPage}</div>
+      <main className="bg-[#D4D3D4] text-black w-full min-h-screen overflow-y-auto">
+        <div className="p-4 sm:p-6 md:p-10">{renderedPage}</div>
       </main>
     </div>
   );

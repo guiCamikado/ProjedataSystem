@@ -181,13 +181,13 @@ public class ProductionRoutes {
         double stockQuantity = Double.parseDouble(body.get("stockQuantity").toString());
         String identifier = body.get("identifier").toString();
 
-        String sql = "UPDATE raw_materials SET name = ?, description = ?, stock_quantity = ?, identifier = ? WHERE id = ?";
+        String sql = "UPDATE raw_materials SET name = ?, stock_quantity = ?, identifier = ? WHERE id = ?";
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(5, id);
+            ps.setLong(4, id);
             ps.setString(1, name);
-            ps.setDouble(3, stockQuantity);
-            ps.setString(4, identifier);
+            ps.setDouble(2, stockQuantity);
+            ps.setString(3, identifier);
             ps.executeUpdate();
         }
         return ResponseEntity.ok("Matéria-prima atualizada com sucesso");

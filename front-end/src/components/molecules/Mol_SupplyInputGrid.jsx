@@ -29,7 +29,7 @@ export default function SupplyRegister() {
     <div className="p-10">
       <h1 className="text-2xl font-semibold mb-6">Registro de Insumos</h1>
 
-      <div className="grid grid-cols-6 gap-4">
+      <div className="">
         {/* Nome do Insumo */}
         <Input
           name="name"

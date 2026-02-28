@@ -6,17 +6,16 @@ export default function ProductInputsGrid({
   handleChange,
   handleAddMaterial,
   handleRemoveMaterial,
-  handleSendToDatabase //WIP
+  handleSendToDatabase, //WIP
 }) {
   return (
-    <div className="grid grid-cols-6 gap-4">
+    <div className="  gap-4">
       {/* Name */}
       <Input
         name="name"
         placeholder="Product Name"
         value={product.name}
         onChange={handleChange}
-        className="col-span-4"
       />
 
       {/* Qtdd */}
@@ -38,48 +37,50 @@ export default function ProductInputsGrid({
       />
 
       {/* Materials */}
-      <div className="col-span-6 flex flex-col gap-4">
-        {product.materials.map((material, index) => (
-          <div key={index} className="flex items-center gap-4">
-            <Input
-              name={`material.${index}.name`}
-              placeholder="Material"
-              value={material.name}
-              onChange={handleChange}
-              className="flex-1"
-            />
+      {product.materials.map((material, index) => (
+        <div
+          key={index}
+          className="flex flex-col md:flex-row md:items-center"
+        >
+          <Input
+            name={`material.${index}.name`}
+            placeholder="Material"
+            value={material.name}
+            onChange={handleChange}
+            className="w-full md:flex-1"
+          />
 
+          <div className="flex gap-2 md:gap-4">
             <Input
               name={`material.${index}.quantity`}
-              placeholder="Quantity ex: 50"
+              placeholder="Quantity ex: 5000"
               value={material.quantity}
               onChange={handleChange}
-              className="w-32"
             />
 
             <Button
               onClick={() => handleRemoveMaterial(index)}
-              className="bg-red-600 hover:bg-red-700 px-3"
+              className="bg-red-600 hover:bg-red-700 px-3 md:px-4"
             >
               ✕
             </Button>
           </div>
-        ))}
+        </div>
+      ))}
 
-        <Button
-          onClick={handleAddMaterial}
-          className="self-start bg-green-600 hover:bg-green-700"
-        >
-          + Add Material
-        </Button>
+      <Button
+        onClick={handleAddMaterial}
+        className="self-start bg-green-600 hover:bg-green-700"
+      >
+        + Add Material
+      </Button>
 
-        <Button
-          onClick={handleSendToDatabase}
-          className="self-start bg-blue-600 hover:bg-blue-700"
-        >
-          Send
-        </Button>
-      </div>
+      <Button
+        onClick={handleSendToDatabase}
+        className="self-start bg-blue-600 hover:bg-blue-700"
+      >
+        Send
+      </Button>
     </div>
   );
 }
