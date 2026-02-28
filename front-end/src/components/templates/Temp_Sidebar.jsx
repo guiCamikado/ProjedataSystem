@@ -66,6 +66,7 @@ export default function Sidebar({ renderedPage }) {
                 { text: "Item Register", link: "?page=itemRegister" },
                 { text: "Insume Register", link: "?page=insumeRegister" },
                 { text: "Craft", link: "?page=craft" },
+                { text: "Manuseio", link: "?page=management" },
               ]}
             />
           </div>

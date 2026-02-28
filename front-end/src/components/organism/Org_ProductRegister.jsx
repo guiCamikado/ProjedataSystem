@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ProductInputsGrid from "../molecules/Mol_ProductInputGrid";
+import ApiService from "../../scripts/PostManager";
 
 export default function ProductRegister() {
   const [product, setProduct] = useState({
@@ -39,12 +40,40 @@ export default function ProductRegister() {
     setProduct(prev => ({ ...prev, [name]: value }));
   }
 
+  async function handleSendToDatabase() {
+    try {
+      const payload = {
+        name: product.name,
+        quantity: Number(product.quantity),
+        price: Number(product.price),
+        materials: JSON.stringify(
+          product.materials.map(m => ({
+            name: m.name,
+            requiredQuantity: Number(m.quantity),
+          }))
+        ),
+      };
+
+      const response = await ApiService.Post(
+        "/api/products/new_product",
+        payload
+      );
+
+      console.log("Produto registrado com sucesso:", response);
+      alert("Produto registrado com sucesso!");
+    } catch (err) {
+      console.error("Erro ao registrar produto:", err);
+      alert("Erro ao registrar produto");
+    }
+  }
+
   return (
     <ProductInputsGrid
       product={product}
       handleChange={handleChange}
       handleAddMaterial={handleAddMaterial}
       handleRemoveMaterial={handleRemoveMaterial}
+      handleSendToDatabase={handleSendToDatabase}
     />
   );
 }

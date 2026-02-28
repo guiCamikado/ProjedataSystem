@@ -3,29 +3,21 @@ import ProductRegister from "../organism/Org_ProductRegister";
 import SupplyRegister from "../molecules/Mol_SupplyInputGrid";
 import CraftingPage from "../molecules/Mol_CraftingPage";
 import Sidebar from "../templates/Temp_Sidebar";
+import ManagementPage from "../molecules/Mol_ManagementPage";
 
 export default function ProductRegisterPage() {
+  // Me enrolei aqui vou ter que trabalhar com isso mesmo:|
   const [product, setProduct] = useState({
     name: "",
     quantity: "",
     price: "",
   });
   const [renderedPage, setRenderedPage] = useState();
-  const [searchParams, setSearchParams] = useState("");
-  // const renderedPage = "craft";
 
   function handleChange(e) {
     const { name, value } = e.target;
     setProduct((prev) => ({ ...prev, [name]: value }));
   }
-
-  // return (
-  //   // WIP Precisa fazer o header aqui
-  //   // WIP SideBar e lógica para trocar de páginas entre: "Registrar produto, registrar materiais, crafting"
-  //   <div className="p-4">
-  //     <ProductRegister product={product} handleChange={handleChange} />
-  //   </div>
-  // );
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -44,6 +36,8 @@ export default function ProductRegisterPage() {
         );
       case "craft":
         return <CraftingPage product={product} handleChange={handleChange} />;
+      case "management":
+        return <ManagementPage/>;
       default:
         return <SupplyRegister product={product} handleChange={handleChange} />;
     }

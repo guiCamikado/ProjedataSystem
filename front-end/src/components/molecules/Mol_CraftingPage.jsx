@@ -1,75 +1,118 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Input from "../atoms/Atm_Inputs";
 import Button from "../atoms/Atm_Button";
-
-/**
- * Mock do backend
- */
-
-const MOCK_RESOURCES = {
-  Ferro: 120,
-  Madeira: 40,
-  "Erva Vermelha": 12,
-  Água: 50,
-  Couro: 30,
-  Linha: 8,
-};
-
-const MOCK_ITEMS = [
-  {
-    //WIP a qtdd máxima deverá ser definida com base matemática definida pelo front e validada pelo back-end
-    id: "item-1",
-    name: "Espada de Ferro",
-    maxQuantity: 5,
-    cost: [
-      { material: "Ferro", quantity: 10 },
-      { material: "Madeira", quantity: 2 },
-    ],
-  },
-  {
-    id: "item-2",
-    name: "Poção de Vida",
-    maxQuantity: 20,
-    cost: [
-      { material: "Erva Vermelha", quantity: 3 },
-      { material: "Água", quantity: 1 },
-    ],
-  },
-  {
-    id: "item-3",
-    name: "Armadura Leve",
-    maxQuantity: 2,
-    cost: [
-      { material: "Couro", quantity: 15 },
-      { material: "Linha", quantity: 5 },
-    ],
-  },
-];
+import ApiService from "../../scripts/PostManager";
 
 export default function CraftingPage() {
   const [search, setSearch] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [maxCraftableQuantity, setMaxCraftableQuantity] = useState(0);
+  const [items, setItems] = useState([]);
+  const [resources, setResources] = useState({});
 
+  // Calcula o máximo que pode ser produzido com base nos recursos disponíveis.
+  useEffect(() => {
+    let maxCraftingByMaterial = Infinity;
+    if (selectedItem !== null) {
+      const craftingCost = selectedItem.cost; //Armazena valor do material
+      const resourcesArray = Object.values(resources);
+      craftingCost.forEach((e) => {
+        resourcesArray.forEach((resource) => {
+          if (resource.name === e.material) {
+            // qtdd máxima de crafting para aquele material
+            if (maxCraftingByMaterial >= resource.stockQuantity / e.quantity) {
+              maxCraftingByMaterial = resource.stockQuantity / e.quantity;
+              console.log(maxCraftingByMaterial);
+            }
+          }
+        });
+      });
+    }
+    setMaxCraftableQuantity(maxCraftingByMaterial);
+  }, [selectedItem, resources]);
+
+  // Busca produtos (itens craftáveis)
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await ApiService.InternalGet("/api/products/products");
+
+        // Converte para o formato esperado pelo componente
+        const processedItems = data.map((prod) => ({
+          id: prod.id,
+          name: prod.name,
+          maxQuantity: prod.quantity,
+          cost: JSON.parse(prod.materials).map((m) => ({
+            material: m.name,
+            quantity: m.requiredQuantity,
+          })),
+        }));
+        setItems(processedItems);
+      } catch (error) {
+        console.error("Erro ao buscar produtos:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Busca matérias-primas (recursos disponíveis)
+  useEffect(() => {
+    const fetchRawMaterials = async () => {
+      try {
+        const data = await ApiService.InternalGet(
+          "/api/raw-materials/raw_materials",
+        );
+
+        const resourcesMap = {};
+        data.forEach((rm) => {
+          resourcesMap[rm.identifier] = {
+            name: rm.name,
+            stockQuantity: rm.stockQuantity,
+          };
+        });
+        setResources(resourcesMap);
+      } catch (error) {
+        console.error("Erro ao buscar matérias-primas:", error);
+      }
+    };
+
+    fetchRawMaterials();
+  }, []);
+
+  // Filtro / Busca
   const filteredItems = useMemo(() => {
-    return MOCK_ITEMS.filter((item) =>
+    return items.filter((item) =>
       item.name.toLowerCase().includes(search.toLowerCase()),
     );
-  }, [search]);
+  }, [search, items]);
 
+  // Seleciona um item e reseta a quantidade
   const handleSelectItem = (item) => {
     setSelectedItem(item);
-    setQuantity(1);
+    setQuantity(0);
   };
 
+  // Controla a quantidade digitada (respeita o máximo do item)
   const handleQuantityChange = (e) => {
     const value = Number(e.target.value);
-
     if (!selectedItem) return;
-
-    if (value >= 1 && value <= selectedItem.maxQuantity) {
+    if (value >= 1 && value <= maxCraftableQuantity) {
       setQuantity(value);
     }
+  };
+
+  const craftNewProducts = () => {
+    console.log(selectedItem.name);
+    console.log(quantity);
+
+    ApiService.Post("/api/craft/new_craft", {
+      name: selectedItem.name,
+      quantity: quantity,
+    })
+      .then((response) => alert(response.data))
+      .catch((error) => alert("Erro: " + error.message));
   };
 
   return (
@@ -77,16 +120,13 @@ export default function CraftingPage() {
       <h1 className="text-2xl font-semibold mb-6">Crafting</h1>
 
       <div className="grid grid-cols-12 gap-6 h-full">
-        {/* Lateral esquerda */}
         <div className="col-span-4 flex flex-col gap-4">
-          {/* Busca */}
           <Input
             placeholder="Buscar item..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
 
-          {/* Seletor */}
           <div className="flex flex-col gap-2 overflow-y-auto">
             {filteredItems.map((item) => (
               <button
@@ -107,16 +147,15 @@ export default function CraftingPage() {
           </div>
         </div>
 
-        {/* Área principal */}
+        {/* Área principal - detalhes do item selecionado */}
         <div className="col-span-8 flex flex-col items-start gap-6">
           {selectedItem ? (
             <>
-              {/* Card de custo */}
+              {/* Custo total para a quantidade escolhida */}
               <div className="w-full max-w-md rounded-2xl border border-black/20 bg-white p-6">
                 <h2 className="text-xl font-semibold mb-4">
                   Custo para craftar
                 </h2>
-
                 <div className="flex flex-col gap-2">
                   {selectedItem.cost.map((cost, index) => (
                     <div key={index} className="flex justify-between text-sm">
@@ -127,32 +166,32 @@ export default function CraftingPage() {
                 </div>
               </div>
 
+              {/* Recursos disponíveis (todas as matérias-primas) */}
               <div className="w-full max-w-md rounded-2xl border border-black/20 bg-white p-6">
                 <h2 className="text-xl font-semibold mb-4">
                   Recursos disponíveis
                 </h2>
 
                 <div className="flex flex-col gap-2">
-                  {Object.entries(MOCK_RESOURCES).map(([resource, amount]) => {
+                  {Object.entries(resources).map(([identifier, resource]) => {
                     const needed =
-                      selectedItem?.cost.find((c) => c.material === resource)
+                      selectedItem.cost.find((c) => c.material === identifier)
                         ?.quantity || 0;
-
                     const totalNeeded = needed * quantity;
-                    const hasEnough = amount >= totalNeeded;
+                    const hasEnough = resource.stockQuantity >= totalNeeded;
 
                     return (
                       <div
-                        key={resource}
+                        key={identifier}
                         className={`flex justify-between text-sm ${
                           totalNeeded > 0 && !hasEnough
                             ? "text-red-600"
                             : "text-black"
                         }`}
                       >
-                        <span>{resource}</span>
+                        <span>{resource.name}</span>
                         <span>
-                          {amount}
+                          {resource.stockQuantity}
                           {totalNeeded > 0 && (
                             <span className="text-black/60">
                               {" "}
@@ -166,26 +205,28 @@ export default function CraftingPage() {
                 </div>
               </div>
 
-              {/* Quantidade */}
+              {/* Controle de quantidade */}
               <div className="flex items-center gap-4">
                 <span className="font-medium">Quantidade:</span>
-
                 <Input
                   type="number"
                   value={quantity}
                   min={1}
-                  max={selectedItem.maxQuantity}
+                  max={maxCraftableQuantity} // WIP criar lógica
                   onChange={handleQuantityChange}
                   className="w-32"
                 />
-
                 <span className="text-sm text-black/60">
-                  Máx: {selectedItem.maxQuantity}
+                  Máx: {maxCraftableQuantity}
                 </span>
               </div>
 
-              {/* Ação */}
-              <Button className="bg-green-600 hover:bg-green-700">
+              {/* Botão de ação (futuramente chamará a API de craft) */}
+              <Button
+                className="bg-green-600 hover:bg-green-700"
+                onClick={() => craftNewProducts()}
+              >
+                {/* // WIP Criar função de craft e conectar com o backend */}
                 Craftar
               </Button>
             </>

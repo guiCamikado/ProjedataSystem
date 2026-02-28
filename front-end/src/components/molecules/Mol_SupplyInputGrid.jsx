@@ -1,11 +1,12 @@
 import { useState } from "react";
 import Input from "../atoms/Atm_Inputs";
 import Button from "../atoms/Atm_Button";
+import ApiService from "../../scripts/PostManager";
 
 export default function SupplyRegister() {
   const [supply, setSupply] = useState({
     name: "",
-    stock: "",
+    stockQuantity: "",
     identifier: "",
   });
 
@@ -19,14 +20,14 @@ export default function SupplyRegister() {
 
   const handleSendToDatabase = () => {
     // WIP: integração com backend
-    console.log("Insumo registrado:", supply);
+    ApiService.Post("/api/raw-materials/new_raw_material", supply).then((response) => {
+      console.log("Insumo registrado com sucesso:", response);
+    });
   };
 
   return (
     <div className="p-10">
-      <h1 className="text-2xl font-semibold mb-6">
-        Registro de Insumos
-      </h1>
+      <h1 className="text-2xl font-semibold mb-6">Registro de Insumos</h1>
 
       <div className="grid grid-cols-6 gap-4">
         {/* Nome do Insumo */}
@@ -41,9 +42,9 @@ export default function SupplyRegister() {
         {/* Quantidade em estoque */}
         <Input
           type="number"
-          name="stock"
+          name="stockQuantity"
           placeholder="Estoque"
-          value={supply.stock}
+          value={supply.stockQuantity}
           onChange={handleChange}
           className="col-span-1"
         />
