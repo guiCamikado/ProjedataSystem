@@ -1,3 +1,10 @@
+Olá, tudo bem?
+
+Este projeto foi desenvolvido como parte do processo seletivo da Projedata. 
+A solução utiliza Java (Spring Boot) no back-end e JavaScript (React e Tailwind CSS) no front-end.
+
+###### A seguir, estão descritas as instruções para a execução da aplicação.
+
 ### Pré-requisitos
 - Java JDK 21
 - Node.js (com npm)
